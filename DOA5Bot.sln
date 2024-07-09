@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DOA5Bot", "DOA5Bot\DOA5Bot.csproj", "{76C798E1-E2C3-4674-BC28-EB2DAE45F3EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryScanner", "MemoryScanner\MemoryScanner.csproj", "{BFFD022D-CE09-4E3A-8EAF-BD002EFDA8D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BTreeEditor", "BTreeEditor\BTreeEditor.csproj", "{5CD5B850-82C2-4A05-B832-810363A422B0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{76C798E1-E2C3-4674-BC28-EB2DAE45F3EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76C798E1-E2C3-4674-BC28-EB2DAE45F3EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76C798E1-E2C3-4674-BC28-EB2DAE45F3EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76C798E1-E2C3-4674-BC28-EB2DAE45F3EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFFD022D-CE09-4E3A-8EAF-BD002EFDA8D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFFD022D-CE09-4E3A-8EAF-BD002EFDA8D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFFD022D-CE09-4E3A-8EAF-BD002EFDA8D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFFD022D-CE09-4E3A-8EAF-BD002EFDA8D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CD5B850-82C2-4A05-B832-810363A422B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CD5B850-82C2-4A05-B832-810363A422B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CD5B850-82C2-4A05-B832-810363A422B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CD5B850-82C2-4A05-B832-810363A422B0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
