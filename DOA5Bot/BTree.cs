@@ -234,14 +234,22 @@ public class NodeJsonConverter : JsonConverter<Node>
             // conditionNode.Condition = () => EvaluateCondition(condition);
             var conditions = JsonConvert.DeserializeObject<List<Condition>>(condition);
             // string jsonString = "[{\"Name\":\"Age\",\"TypedValue\":{\"Value\":18,\"Type\":\"System.Int32\"}},{\"Name\":\"Gender\",\"TypedValue\":{\"Value\":\"Male\",\"Type\":\"System.String\"}}]";
-            /*foreach (Condition cond in conditions)
-            {
-                // string typedValueJson = obj["TypedValue"].ToString();
-                string typedValueJson = JsonConvert.SerializeObject(cond.TypedValue);
-                cond.TypedValue = JsonConvert.DeserializeObject<TypedValue>(typedValueJson);
-                // cond.TypedValue = Condition.ParseTypedValue(typedValueJson);
-            }#1#
-            conditionNode.Conditions = conditions;
+            // foreach (Condition cond in conditions)
+            // {
+            //     // string typedValueJson = obj["TypedValue"].ToString();
+            //     string typedValueJson = JsonConvert.SerializeObject(cond.TypedValue);
+            //     cond.TypedValue = JsonConvert.DeserializeObject<TypedValue>(typedValueJson);
+            //     // cond.TypedValue = Condition.ParseTypedValue(typedValueJson);
+            // }
+            
+            // conditionNode.Conditions = conditions;
+            
+            // foreach(ComplexCondition complexCondition in conditionNode.ComplexConditions)
+            // {
+            //     complexCondition.Conditions = conditions;
+            // }
+
+            // conditionNode.Conditions = obj["Conditions"].ToObject<List<Condition>>(serializer);
         }*/
 
         return node;
@@ -389,6 +397,8 @@ public class ComplexCondition
             "Opponent.StrikeType" => Opponent.StrikeType,
             "Opponent.TotalRecovery" => Opponent.TotalRecovery,
             "Opponent.TotalStartup" => Opponent.TotalStartup,
+            
+            "Opponent.TotalStartup-Opponent.CurrentMoveFrame" => Opponent.TotalStartup - Opponent.CurrentMoveFrame,
             _ => throw new InvalidOperationException($"Unknown property: {propertyName}")
         };
     } 

@@ -28,7 +28,7 @@ namespace BTreeEditor
         private void InitializeComponent()
         {
             this.Text = "Behavior Tree Editor";
-            this.Size = new Size(1300, 600);
+            this.Size = new Size(1400, 600);
         }
 
         private void InitializeControls()
@@ -36,7 +36,7 @@ namespace BTreeEditor
             treeView = new TreeView
             {
                 Dock = DockStyle.Left,
-                Width = 500,
+                Width = 800,
                 AllowDrop = true
             };
             treeView.ItemDrag += TreeView_ItemDrag;
@@ -70,8 +70,8 @@ namespace BTreeEditor
                 WrapContents = true
             };
             buttonPanel.Controls.AddRange(new Control[] { 
-                btnAddSequence, btnAddSelector, btnAddCondition, btnAddPerformMove, btnDelete, 
-                btnSave, btnLoad, btnAddComplexCondition, btnEditComplexCondition, btnDeleteComplexCondition 
+                btnAddSequence, btnAddSelector, btnAddCondition,  btnAddComplexCondition, btnEditComplexCondition, btnDeleteComplexCondition, btnAddPerformMove, btnDelete, 
+                btnSave, btnLoad
             });
 
             this.Controls.Add(treeView);
@@ -468,13 +468,64 @@ namespace BTreeEditor
             dgvConditions = new DataGridView
             {
                 Location = new Point(10, 40),
-                Size = new Size(560, 250),
+                Size = new Size(860, 250),
                 AutoGenerateColumns = false,
                 AllowUserToAddRows = false
             };
-            dgvConditions.Columns.Add(new DataGridViewTextBoxColumn { Name = "Property", HeaderText = "Property" });
-            dgvConditions.Columns.Add(new DataGridViewTextBoxColumn { Name = "Operator", HeaderText = "Operator" });
-            dgvConditions.Columns.Add(new DataGridViewTextBoxColumn { Name = "Value", HeaderText = "Value" });
+            // dgvConditions.Columns.Add(new DataGridViewTextBoxColumn { Name = "Property", HeaderText = "Property" });
+            // dgvConditions.Columns.Add(new DataGridViewTextBoxColumn { Name = "Operator", HeaderText = "Operator" });
+            // dgvConditions.Columns.Add(new DataGridViewTextBoxColumn { Name = "Value", HeaderText = "Value" });
+
+            // Property column (ComboBox)
+            var propertyColumn = new DataGridViewComboBoxColumn
+            {
+                Name = "Property",
+                HeaderText = "Property",
+                Width = 200,
+                DataSource = new List<string>(new GameInfoPropertyConverter().GetStandardValues(null).Cast<string>())
+            };
+            dgvConditions.Columns.Add(propertyColumn);
+
+            // Operator column (ComboBox)
+            var operatorColumn = new DataGridViewComboBoxColumn
+            {
+                Name = "Operator",
+                HeaderText = "Operator",
+                DataSource = new List<string>(new OperatorConverter().GetStandardValues(null).Cast<string>())
+            };
+            dgvConditions.Columns.Add(operatorColumn);
+
+            // Value column (DataGridViewTextBoxColumn with custom editing)
+            var valueColumn = new DataGridViewTextBoxColumn
+            {
+                Name = "Value",
+                HeaderText = "Value"
+            };
+            dgvConditions.Columns.Add(valueColumn);
+
+            // Add custom editing for the Value column
+            dgvConditions.CellClick += (sender, e) =>
+            {
+                if (e.ColumnIndex == valueColumn.Index && e.RowIndex != -1)
+                {
+                    var cell = dgvConditions[e.ColumnIndex, e.RowIndex];
+                    var rect = dgvConditions.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, true);
+
+                    var numericUpDown = new NumericUpDown
+                    {
+                        Minimum = decimal.MinValue,
+                        Maximum = decimal.MaxValue,
+                        DecimalPlaces = 2,
+                        Value = decimal.TryParse(cell.Value?.ToString(), out decimal result) ? result : 0,
+                        Location = rect.Location,
+                        Size = rect.Size
+                    };
+
+                    numericUpDown.ValueChanged += (s, ev) => cell.Value = numericUpDown.Value;
+                    dgvConditions.Controls.Add(numericUpDown);
+                    numericUpDown.Focus();
+                }
+            };
 
             btnAddCondition = new Button
             {
@@ -537,7 +588,8 @@ namespace BTreeEditor
                 {
                     Property = row.Cells["Property"].Value?.ToString(),
                     Operator = row.Cells["Operator"].Value?.ToString(),
-                    Value = row.Cells["Value"].Value
+                    Value = Convert.ToSingle(row.Cells["Value"].Value)
+                    // Value = row.Cells["Value"].Value
                 });
             }
         }
@@ -848,34 +900,36 @@ namespace BTreeEditor
         {
             return new StandardValuesCollection(new List<string>
             {
-                "GameInfo.PX_Distance",
-                "GameInfo.PX_TotalActiveFrames",
-                "GameInfo.Player.Airborne",
-                "GameInfo.Player.ComboCounter",
-                "GameInfo.Player.CurrentCharacter",
-                "GameInfo.Player.CurrentMove",
-                "GameInfo.Player.CurrentMoveFrame",
-                "GameInfo.Player.Direction",
-                "GameInfo.Player.HighMidLowGround",
-                "GameInfo.Player.MoveType",
-                "GameInfo.Player.MoveTypeDetailed",
-                "GameInfo.Player.Stance",
-                "GameInfo.Player.StrikeType",
-                "GameInfo.Player.TotalRecovery",
-                "GameInfo.Player.TotalStartup",
-                "GameInfo.Opponent.Airborne",
-                "GameInfo.Opponent.ComboCounter",
-                "GameInfo.Opponent.CurrentCharacter",
-                "GameInfo.Opponent.CurrentMove",
-                "GameInfo.Opponent.CurrentMoveFrame",
-                "GameInfo.Opponent.Direction",
-                "GameInfo.Opponent.HighMidLowGround",
-                "GameInfo.Opponent.MoveType",
-                "GameInfo.Opponent.MoveTypeDetailed",
-                "GameInfo.Opponent.Stance",
-                "GameInfo.Opponent.StrikeType",
-                "GameInfo.Opponent.TotalRecovery",
-                "GameInfo.Opponent.TotalStartup"
+                "PX_Distance",
+                "PX_TotalActiveFrames",
+                "Player.Airborne",
+                "Player.ComboCounter",
+                "Player.CurrentCharacter",
+                "Player.CurrentMove",
+                "Player.CurrentMoveFrame",
+                "Player.Direction",
+                "Player.HighMidLowGround",
+                "Player.MoveType",
+                "Player.MoveTypeDetailed",
+                "Player.Stance",
+                "Player.StrikeType",
+                "Player.TotalRecovery",
+                "Player.TotalStartup",
+                "Opponent.Airborne",
+                "Opponent.ComboCounter",
+                "Opponent.CurrentCharacter",
+                "Opponent.CurrentMove",
+                "Opponent.CurrentMoveFrame",
+                "Opponent.Direction",
+                "Opponent.HighMidLowGround",
+                "Opponent.MoveType",
+                "Opponent.MoveTypeDetailed",
+                "Opponent.Stance",
+                "Opponent.StrikeType",
+                "Opponent.TotalRecovery",
+                "Opponent.TotalStartup",
+                
+                "Opponent.TotalStartup-Opponent.CurrentMoveFrame"
             });
         }
     }
