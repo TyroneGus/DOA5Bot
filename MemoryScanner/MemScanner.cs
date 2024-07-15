@@ -1,6 +1,13 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO.MemoryMappedFiles;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
 
 namespace MemoryScanner;
 
@@ -13,7 +20,7 @@ public class MemScanner
 {
     // class variables
     private Process targetProcess;
-    private IntPtr progressHandle;
+    private IntPtr processHandle;
 
     // desired rights
     private const uint PROCESS_ALL_ACCESS = 0x1F0FFF;
@@ -32,7 +39,7 @@ public class MemScanner
         targetProcess = process;
         try
         {
-            progressHandle = OpenProcess(PROCESS_ALL_ACCESS, false, Convert.ToUInt32(targetProcess.Id));
+            processHandle = OpenProcess(PROCESS_ALL_ACCESS, false, Convert.ToUInt32(targetProcess.Id));
         }
         catch (Exception e)
         {
@@ -51,7 +58,7 @@ public class MemScanner
     public byte[] ReadMem(IntPtr address, int size)
     {
         byte[] buffer = new byte[size];
-        if(ReadProcessMemory(progressHandle, address, buffer, size, out IntPtr bytesRead))
+        if(ReadProcessMemory(processHandle, address, buffer, size, out IntPtr bytesRead))
         {
             return buffer;
         }
@@ -97,14 +104,148 @@ public class MemScanner
         return convertedBytes;
     }
 
-  
-    
+
     public List<IntPtr> ScanMemory(string byteString)
+    {
+        var results = new ConcurrentBag<IntPtr>();
+        byte[] signatureByteArray = StringToByteArray(byteString);
+        int chunkSize = 1024 * 1024; // 1MB chunks
+
+        Parallel.ForEach(GetMemoryRegions(), region =>
+        {
+            if ((region.Protect == PAGE_READONLY || region.Protect == PAGE_READWRITE) && region.State == MEM_COMMIT)
+            {
+                IntPtr baseAddress = region.BaseAddress;
+                // long regionSize = region.RegionSize.ToInt64();
+                int regionSize = region.RegionSize.ToInt32();
+
+                for (int offset = 0; offset < regionSize; offset += chunkSize)
+                {
+                    int sizeToRead = (int)Math.Min(chunkSize, regionSize - offset);
+                    byte[] buffer = new byte[sizeToRead];
+                    IntPtr bytesRead;
+                    if (ReadProcessMemory(processHandle, baseAddress + offset, buffer, sizeToRead, out bytesRead))
+                    {
+                        int result = SundayAlgorithm.SundaySearch(buffer, signatureByteArray); 
+                        // int result = KmpSearch(buffer, signatureByteArray);
+                        if (result != -1)
+                        {
+                            results.Add(baseAddress + offset + result);
+                        }
+                        
+                        // List<int> matches = SimdSundayScanner.Search(buffer, signatureByteArray);
+                        // List<int> matches = SearchWithWildcards(buffer, signatureByteArray);
+                        // foreach (int match in matches)
+                        // {
+                        //     results.Add(baseAddress + offset + match);
+                        // }
+                    }
+                }
+            }
+        });
+
+        return results.ToList();
+    }
+
+private IEnumerable<MEMORY_BASIC_INFORMATION> GetMemoryRegions()
+{
+    IntPtr address = IntPtr.Zero;
+    while (VirtualQueryEx(processHandle, address, out MEMORY_BASIC_INFORMATION mbi, (uint)Marshal.SizeOf<MEMORY_BASIC_INFORMATION>()))
+    {
+        yield return mbi;
+        address = new IntPtr(address.ToInt64() + mbi.RegionSize.ToInt64());
+    }
+}
+
+private List<int> SearchWithWildcards(byte[] haystack, byte[] needle)
+{
+    List<int> results = new List<int>();
+    for (int i = 0; i <= haystack.Length - needle.Length; i++)
+    {
+        bool match = true;
+        for (int j = 0; j < needle.Length; j++)
+        {
+            if (needle[j] != 0x0 && needle[j] != haystack[i + j])
+            {
+                match = false;
+                break;
+            }
+        }
+        if (match)
+        {
+            results.Add(i);
+        }
+    }
+    return results;
+}
+
+// KMP search algorithm implementation
+/*private static int KmpSearch(byte[] text, byte[] pattern)
+{
+    int[] lps = ComputeLPSArray(pattern);
+    int i = 0, j = 0;
+
+    while (i < text.Length)
+    {
+        if (pattern[j] == text[i])
+        {
+            i++;
+            j++;
+        }
+
+        if (j == pattern.Length)
+        {
+            return i - j;
+        }
+        else if (i < text.Length && pattern[j] != text[i])
+        {
+            if (j != 0)
+                j = lps[j - 1];
+            else
+                i++;
+        }
+    }
+
+    return -1;
+}
+
+private static int[] ComputeLPSArray(byte[] pattern)
+{
+    int[] lps = new int[pattern.Length];
+    int len = 0;
+    int i = 1;
+
+    while (i < pattern.Length)
+    {
+        if (pattern[i] == pattern[len])
+        {
+            len++;
+            lps[i] = len;
+            i++;
+        }
+        else
+        {
+            if (len != 0)
+            {
+                len = lps[len - 1];
+            }
+            else
+            {
+                lps[i] = 0;
+                i++;
+            }
+        }
+    }
+
+    return lps;
+}*/
+    
+   /* public List<IntPtr> ScanMemory(string byteString)
     {
         List<IntPtr> results = new List<IntPtr>();
         IntPtr currentAddress = IntPtr.Zero;
         byte[] signatureByteArray = StringToByteArray(byteString);
-        int chunkSize = 24096; // Example chunk size
+        int chunkSize = 4096; // Example chunk size
 
         while (VirtualQueryEx(progressHandle, currentAddress, out MEMORY_BASIC_INFORMATION memoryInfo, (uint)Marshal.SizeOf(typeof(MEMORY_BASIC_INFORMATION))))
         {
@@ -129,7 +270,8 @@ public class MemScanner
         }
 
         return results;
-    }
+    }*/
+   
       // memory scanner cause near 800MB memory use
     /*public List<IntPtr> ScanMemory(string byteString)
     {
@@ -185,13 +327,115 @@ public class MemScanner
         return results;
     }*/
     
-    /*
-     在C#中，`Dispose`方法用于释放对象占用的资源，特别是那些非托管资源（如文件句柄、数据库连接等）。实现`Dispose`方法通常涉及以下步骤：
-
-        1. **实现IDisposable接口**：你的类需要实现`IDisposable`接口。
-        2. **实现Dispose方法**：在`Dispose`方法中，释放对象占用的资源。
-        3. **调用Dispose方法**：在使用完对象后，显式调用`Dispose`方法。
-
-        下面是一个简单的示例，演示如何实现和使用`Dispose`方法：
-    */
 }
+
+
+/*
+public unsafe class SimdSundayScanner
+{
+    private const int ALPHABET_SIZE = 256;
+
+    public static List<int> Search(byte[] haystack, byte[] needle)
+    {
+        List<int> results = new List<int>();
+        int needleLength = needle.Length;
+        int haystackLength = haystack.Length;
+
+        if (needleLength == 0)
+            return results;
+
+        // Preprocess the needle
+        int[] shift = new int[ALPHABET_SIZE];
+        for (int i = 0; i < ALPHABET_SIZE; i++)
+            shift[i] = needleLength + 1;
+        for (int i = 0; i < needleLength; i++)
+            if (needle[i] != 0x0) // Not a wildcard
+                shift[needle[i]] = needleLength - i;
+
+        if (Avx2.IsSupported && needleLength <= 32)
+        {
+            Vector256<byte> needleVector = Vector256<byte>.Zero;
+            Vector256<byte> wildcardMask = Vector256<byte>.Zero;
+
+            fixed (byte* pNeedle = needle)
+            {
+                for (int i = 0; i < needleLength; i++)
+                {
+                    if (pNeedle[i] != 0x0) // Not a wildcard
+                    {
+                        needleVector = Avx2.InsertVector128(needleVector, Vector128.Create(pNeedle[i]), i / 16);
+                        wildcardMask = Avx2.InsertVector128(wildcardMask, Vector128.Create((byte)0xFF), i / 16);
+                    }
+                }
+            }
+
+            fixed (byte* pHaystack = haystack)
+            {
+                int i = 0;
+                while (i <= haystackLength - needleLength)
+                {
+                    if (i + 32 <= haystackLength)
+                    {
+                        Vector256<byte> haystackVector = Avx.LoadVector256(pHaystack + i);
+                        Vector256<byte> comparison = Avx2.And(Avx2.CompareEqual(haystackVector, needleVector), wildcardMask);
+                        uint mask = (uint)Avx2.MoveMask(comparison);
+
+                        if ((mask & ((1u << needleLength) - 1)) == ((1u << needleLength) - 1))
+                        {
+                            results.Add(i);
+                        }
+                    }
+                    else
+                    {
+                        bool match = true;
+                        for (int j = 0; j < needleLength; j++)
+                        {
+                            if (needle[j] != 0x0 && needle[j] != pHaystack[i + j])
+                            {
+                                match = false;
+                                break;
+                            }
+                        }
+                        if (match)
+                        {
+                            results.Add(i);
+                        }
+                    }
+
+                    if (i + needleLength < haystackLength)
+                        i += shift[pHaystack[i + needleLength]];
+                    else
+                        break;
+                }
+            }
+        }
+        else
+        {
+            // Fallback to standard Sunday algorithm for longer patterns or if AVX2 is not supported
+            int i = 0;
+            while (i <= haystackLength - needleLength)
+            {
+                bool match = true;
+                for (int j = 0; j < needleLength; j++)
+                {
+                    if (needle[j] != 0x0 && needle[j] != haystack[i + j])
+                    {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match)
+                {
+                    results.Add(i);
+                }
+
+                if (i + needleLength < haystackLength)
+                    i += shift[haystack[i + needleLength]];
+                else
+                    break;
+            }
+        }
+
+        return results;
+    }
+}*/
