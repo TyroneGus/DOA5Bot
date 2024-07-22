@@ -1,0 +1,78 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "DOA5Bot Debug",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build DOA5Bot Debug",
+        "program": "${workspaceFolder}/DOA5Bot/bin/Debug/net8.0/DOA5Bot.exe",
+        "args": [],
+        "cwd": "${workspaceFolder}/DOA5Bot",
+        "console": "internalConsole",
+        "stopAtEntry": false,
+        "internalConsoleOptions": "openOnSessionStart"
+      },
+      {
+        "name": "DOA5Bot Release",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build DOA5Bot Release",
+        "program": "${workspaceFolder}/DOA5Bot/bin/Release/net8.0/DOA5Bot.exe",
+        "args": [],
+        "cwd": "${workspaceFolder}/DOA5Bot",
+        "console": "internalConsole",
+        "stopAtEntry": false,
+        "internalConsoleOptions": "openOnSessionStart"
+      },
+      {
+        "name": "BTreeEditor Debug",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build BTreeEditor Debug",
+        "program": "${workspaceFolder}/BTreeEditor/bin/Debug/net8.0-windows/BTreeEditor.exe",
+        "args": [],
+        "cwd": "${workspaceFolder}/BTreeEditor",
+        "console": "internalConsole",
+        "stopAtEntry": false,
+        "internalConsoleOptions": "openOnSessionStart"
+      },
+      {
+        "name": "BTreeEditor Release",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build BTreeEditor Release",
+        "program": "${workspaceFolder}/BTreeEditor/bin/Release/net8.0-windows/BTreeEditor.exe",
+        "args": [],
+        "cwd": "${workspaceFolder}/BTreeEditor",
+        "console": "internalConsole",
+        "stopAtEntry": false,
+        "internalConsoleOptions": "openOnSessionStart"
+      },
+      {
+        "name": "MemoryScanner Debug",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build MemoryScanner Debug",
+        "program": "${workspaceFolder}/MemoryScanner/bin/Debug/net8.0/MemoryScanner.dll",
+        "args": [],
+        "cwd": "${workspaceFolder}/MemoryScanner",
+        "console": "internalConsole",
+        "stopAtEntry": false,
+        "internalConsoleOptions": "openOnSessionStart"
+      },
+      {
+        "name": "MemoryScanner Release",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build MemoryScanner Release",
+        "program": "${workspaceFolder}/MemoryScanner/bin/Release/net8.0/MemoryScanner.dll",
+        "args": [],
+        "cwd": "${workspaceFolder}/MemoryScanner",
+        "console": "internalConsole",
+        "stopAtEntry": false,
+        "internalConsoleOptions": "openOnSessionStart"
+      }
+    ]
+  }
+  

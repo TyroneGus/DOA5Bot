@@ -1,0 +1,132 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+	  {
+		"label": "build MemoryScanner Debug",
+		"command": "dotnet",
+		"type": "process",
+		"args": [
+		  "build",
+		  "MemoryScanner/MemoryScanner.csproj",
+		  "--configuration",
+		  "Debug"
+		],
+		"problemMatcher": "$msCompile",
+		"group": {
+			"kind": "build",
+			"isDefault": false
+		}
+	  },
+	  {
+		"label": "build MemoryScanner Release",
+		"command": "dotnet",
+		"type": "process",
+		"args": [
+		  "build",
+		  "MemoryScanner/MemoryScanner.csproj",
+		  "--configuration",
+		  "Release"
+		],
+		"problemMatcher": "$msCompile"
+	  },
+	  {
+		"label": "build MemoryScanner Release x64",
+		"command": "dotnet",
+		"type": "process",
+		"args": [
+		  "build",
+		  "MemoryScanner/MemoryScanner.csproj",
+		  "--configuration",
+		  "Release",
+		  "--runtime",
+		  "win-x64"
+		],
+		"problemMatcher": "$msCompile"
+	  },
+	  {
+		"label": "build DOA5Bot Debug",
+		"command": "dotnet",
+		"type": "process",
+		"args": [
+		  "build",
+		  "DOA5Bot/DOA5Bot.csproj",
+		  "--configuration",
+		  "Debug"
+		],
+		"problemMatcher": "$msCompile",
+		"group": {
+			"kind": "build",
+			"isDefault": false
+		}
+	  },
+	  {
+		"label": "build DOA5Bot Release",
+		"command": "dotnet",
+		"type": "process",
+		"args": [
+		  "build",
+		  "DOA5Bot/DOA5Bot.csproj",
+		  "--configuration",
+		  "Release"
+		],
+		"problemMatcher": "$msCompile"
+	  },
+	  {
+		"label": "build DOA5Bot Release x64",
+		"command": "dotnet",
+		"type": "process",
+		"args": [
+		  "build",
+		  "DOA5Bot/DOA5Bot.csproj",
+		  "--configuration",
+		  "Release",
+		  "--runtime",
+		  "win-x64"
+		],
+		"problemMatcher": "$msCompile"
+	  },
+	  {
+		"label": "build BTreeEditor Debug",
+		"command": "dotnet",
+		"type": "process",
+		"args": [
+		  "build",
+		  "BTreeEditor/BTreeEditor.csproj",
+		  "--configuration",
+		  "Debug"
+		],
+		"problemMatcher": "$msCompile",
+		"group": {
+			"kind": "build",
+			"isDefault": true
+		}
+	  },
+	  {
+		"label": "build BTreeEditor Release",
+		"command": "dotnet",
+		"type": "process",
+		"args": [
+		  "build",
+		  "BTreeEditor/BTreeEditor.csproj",
+		  "--configuration",
+		  "Release"
+		],
+		"problemMatcher": "$msCompile"
+	  },
+	  {
+		"label": "build BTreeEditor Release x64",
+		"command": "dotnet",
+		"type": "process",
+		"args": [
+		  "build",
+		  "BTreeEditor/BTreeEditor.csproj",
+		  "--configuration",
+		  "Release",
+		  "--runtime",
+		  "win-x64"
+		],
+		"problemMatcher": "$msCompile"
+	  }
+	]
+  }
+  
