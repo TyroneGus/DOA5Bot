@@ -7,6 +7,7 @@
     {
         private static string processName = "game";
         private static Process process = null;
+        public static Process Process => process;
         private static MemScanner memScan = null;
         private static string _aobPattern = "af 47 e9 42";
         private static IntPtr _aobAddress = 0;
@@ -14,6 +15,7 @@
         public static CharacterInfo Opponent = new CharacterInfo();
         public static float PX_Distance;
         public static short PX_TotalActiveFrames;
+        public static bool IsInitialized { get; private set; }
 
         /*public static class Player
         {
@@ -81,6 +83,8 @@
             }
             
             FindAOB();
+            
+            IsInitialized = true;
         }
         
         
@@ -140,6 +144,11 @@
         
         public static void ReadCharacterInfo()
         {
+	        if (!IsInitialized)
+	        {
+		        throw new InvalidOperationException("GameInfo is not initialized. Call Init() first.");
+	        }
+	        
 	        if (_curremtSlot == PlayerSlot.P1)
 	        {
 		        Player.Airborne = memScan.ReadMem(_aobAddress + 0x35EF8, 1)[0]; // 0x35EF8;

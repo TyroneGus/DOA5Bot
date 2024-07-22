@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryScanner", "MemoryScan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BTreeEditor", "BTreeEditor\BTreeEditor.csproj", "{5CD5B850-82C2-4A05-B832-810363A422B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DOA5BotWinTool", "DOA5BotWinTool\DOA5BotWinTool.csproj", "{4A3995B3-631B-4D25-81B9-5A5F0AC92CBA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{5CD5B850-82C2-4A05-B832-810363A422B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CD5B850-82C2-4A05-B832-810363A422B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5CD5B850-82C2-4A05-B832-810363A422B0}.Release|Any CPU.Build.0 = Release|Any CPU
+        {4A3995B3-631B-4D25-81B9-5A5F0AC92CBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {4A3995B3-631B-4D25-81B9-5A5F0AC92CBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {4A3995B3-631B-4D25-81B9-5A5F0AC92CBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {4A3995B3-631B-4D25-81B9-5A5F0AC92CBA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
